@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Control Panel</title></head>
+<body>
+    <h2>Minecraft Control Panel</h2>
+    <button onclick="send('/start')">Start Server</button>
+    <button onclick="send('/stop')">Stop Server</button>
+    <script>
+        function send(path) {
+            fetch(path, { method: "POST" })
+                .then(res => res.text())
+                .then(alert)
+                .catch(err => alert("Error: " + err));
+        }
+    </script>
+</body>
+</html>
+
