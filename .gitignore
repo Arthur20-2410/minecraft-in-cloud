@@ -1,0 +1,22 @@
+# Ignore node modules
+node_modules/
+
+# Ignore system and shell history files
+.bash*
+.cache/
+.lesshst
+.profile
+.sudo_as_admin_successful
+.vim/
+.viminfo
+.ssh/
+.git-credentials
+.gitconfig
+.npm/
+.pm2/
+
+# Ignore backups and other local-only folders
+backup-old-site/
+
+# Ignore logs
+*.log
