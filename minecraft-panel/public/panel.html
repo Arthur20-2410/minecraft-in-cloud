@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html>
-<head><title>Control Panel</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minecraft Control Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <h2>Minecraft Control Panel</h2>
-    <button onclick="send('/start')">Start Server</button>
-    <button onclick="send('/stop')">Stop Server</button>
-    <script>
-        function send(path) {
-            fetch(path, { method: "POST" })
-                .then(res => res.text())
-                .then(alert)
-                .catch(err => alert("Error: " + err));
-        }
-    </script>
+  <div class="panel-container">
+    <h2>🟢 Minecraft Control Panel</h2>
+    <a class="logout" href="/logout">🔓 Logout</a>
+    <div class="buttons">
+      <button id="startBtn" disabled>Start Server</button>
+      <button id="stopBtn" disabled>Stop Server</button>
+    </div>
+    <pre id="console">Console output will appear here...</pre>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="panel.js"></script>
 </body>
 </html>
 

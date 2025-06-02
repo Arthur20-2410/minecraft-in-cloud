@@ -1,22 +1,37 @@
-# Ignore node modules
+# Node
 node_modules/
+npm-debug.log
+*.log
+*.gz
+.env
 
-# Ignore system and shell history files
+# Minecraft server generated content
+minecraft-server/world/
+minecraft-server/logs/
+minecraft-server/eula.txt
+minecraft-server/whitelist.json
+minecraft-server/ops.json
+minecraft-server/banned-*.json
+minecraft-server/usercache.json
+
+# Personal shell/config files
 .bash*
 .cache/
 .lesshst
-.profile
-.sudo_as_admin_successful
-.vim/
-.viminfo
-.ssh/
-.git-credentials
-.gitconfig
+.local/
 .npm/
 .pm2/
+.profile
+.ssh/
+.vim*
+.sudo_as_admin_successful
 
-# Ignore backups and other local-only folders
+# Editors/project metadata
+*.swp
+*.bak
+.DS_Store
+.vscode/
+
+# Backups
 backup-old-site/
 
-# Ignore logs
-*.log
