@@ -2,8 +2,12 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const session = require('express-session');
+const { exec } = require('child_process');
 
 const app = express();
+const http = require('http').createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(http);
 const PORT = 3000;
 
 // Middleware
@@ -87,8 +91,42 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// STATUS endpoint for panel.js
+app.get('/status', (req, res) => {
+  exec('pgrep -f server.jar', (err, stdout) => {
+    if (stdout.trim()) {
+      res.json({ status: 'running' });
+    } else {
+      res.json({ status: 'stopped' });
+    }
+  });
+});
+
+// SOCKET.IO START/STOP HANDLERS
+io.on('connection', (socket) => {
+  console.log("✅ WebSocket client connected");
+
+  socket.on('start-server', () => {
+    const scriptPath = path.join(__dirname, 'scripts', 'start.sh');
+    const child = exec(`bash ${scriptPath}`);
+
+    child.stdout.on('data', data => socket.emit('console-output', data));
+    child.stderr.on('data', data => socket.emit('console-output', `[ERR] ${data}`));
+    child.on('close', code => socket.emit('console-output', `Server exited with code ${code}\n`));
+  });
+
+  socket.on('stop-server', () => {
+    const scriptPath = path.join(__dirname, 'scripts', 'stop.sh');
+    const child = exec(`bash ${scriptPath}`);
+
+    child.stdout.on('data', data => socket.emit('console-output', data));
+    child.stderr.on('data', data => socket.emit('console-output', `[ERR] ${data}`));
+    child.on('close', code => socket.emit('console-output', `Stopped (code ${code})\n`));
+  });
+});
+
 // START SERVER
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log(`✅ Minecraft panel live at http://localhost:${PORT}`);
 });
 

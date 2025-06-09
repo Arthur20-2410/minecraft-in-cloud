@@ -35,3 +35,9 @@ minecraft-server/usercache.json
 # Backups
 backup-old-site/
 
+.git-credentials
+.gitconfig
+
+
+
+
