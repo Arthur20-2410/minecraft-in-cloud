@@ -39,5 +39,8 @@ backup-old-site/
 .gitconfig
 
 
+minecraft-server/backups/*
+!minecraft-server/backups/.gitkeep
+
 
 
