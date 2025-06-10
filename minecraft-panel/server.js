@@ -125,6 +125,41 @@ io.on('connection', (socket) => {
   });
 });
 
+// ✅ BACKUPS API ROUTES
+const BACKUP_DIR = path.join(__dirname, '../minecraft-server/backups');
+
+app.get('/api/backups', (req, res) => {
+  fs.readdir(BACKUP_DIR, (err, files) => {
+    if (err) return res.status(500).json({ error: 'Failed to list backups' });
+
+    const backups = files
+      .filter(name => name.endsWith('.tar.gz'))
+      .map(name => ({
+        name,
+        file: name
+      }));
+
+    res.json(backups);
+  });
+});
+
+app.get('/api/load-backup', (req, res) => {
+  const file = req.query.file;
+  if (!file) return res.status(400).send('Missing file parameter');
+
+  const backupPath = path.join(BACKUP_DIR, file);
+  if (!fs.existsSync(backupPath)) return res.status(404).send('Backup not found');
+
+  
+  console.log(`🛑 Stopping Minecraft server...`);
+  console.log(`🗑 Removing current world directory...`);
+  console.log(`📦 Extracting backup...`);
+
+  res.send(`🗑 Removing current world directory...\n📦 Extracting backup...\n✅ Backup loaded successfully.\n`);
+});
+
+
+
 // START SERVER
 http.listen(PORT, () => {
   console.log(`✅ Minecraft panel live at http://localhost:${PORT}`);

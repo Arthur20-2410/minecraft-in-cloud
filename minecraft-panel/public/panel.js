@@ -2,6 +2,8 @@ const socket = io();
 const consoleOutput = document.getElementById('console');
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
+const backupSelect = document.getElementById('backupSelect');
+const loadBackupBtn = document.getElementById('loadBackupBtn');
 
 // Helper: disable/enable buttons
 function setServerRunning(running) {
@@ -29,6 +31,7 @@ fetch('/status')
     }
   });
 
+// Start server button
 if (startBtn) {
   startBtn.onclick = () => {
     socket.emit('start-server');
@@ -37,6 +40,7 @@ if (startBtn) {
   };
 }
 
+// Stop server button
 if (stopBtn) {
   stopBtn.onclick = () => {
     socket.emit('stop-server');
@@ -45,8 +49,40 @@ if (stopBtn) {
   };
 }
 
+// Receive console output
 socket.on('console-output', (msg) => {
   consoleOutput.textContent += msg;
   consoleOutput.scrollTop = consoleOutput.scrollHeight;
 });
+
+// Load list of backups
+fetch('/api/backups')
+  .then(res => res.json())
+  .then(backups => {
+    backups.forEach(b => {
+      const option = document.createElement('option');
+      option.value = b.file;
+      option.textContent = b.name;
+      backupSelect.appendChild(option);
+    });
+  });
+
+// Load selected backup
+if (loadBackupBtn) {
+  loadBackupBtn.onclick = () => {
+    const selectedFile = backupSelect.value;
+    if (!selectedFile) return;
+
+    consoleOutput.textContent += `🔁 Loading backup: ${selectedFile}\n`;
+
+    fetch(`/api/load-backup?file=${encodeURIComponent(selectedFile)}`)
+      .then(res => res.text())
+      .then(text => {
+        consoleOutput.textContent += text + '\n';
+      })
+      .catch(err => {
+        consoleOutput.textContent += `❌ Error loading backup: ${err.message}\n`;
+      });
+  };
+}
 
